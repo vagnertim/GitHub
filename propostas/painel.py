@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Gera o PDF "Recursos do painel" de um prestador, com a mesma identidade da proposta.
+Telas ilustrativas (dados de teste) em propostas/telas/.
 Uso: python3 propostas/painel.py propostas/exemplos/atelie-do-automovel.json"""
 import json, os, re, subprocess, sys, unicodedata
 from gerar import AQUI, I, esc, data_uri, erro, TPL_VARS
@@ -7,47 +8,76 @@ from gerar import AQUI, I, esc, data_uri, erro, TPL_VARS
 arq = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else erro('informe o arquivo de valores')
 v = json.load(open(arq, encoding='utf-8'))
 nome, art = v['nome'].strip(), v['artigo'].lower()
-de = 'd' + art
 ape = (v.get('apelido') or nome).strip()
 plus = v.get('modulo_plus', 'incluso_ate_validade') != 'nao'
-PB = f' <span class="plusb" style="font-size:19px;padding:6px 14px;vertical-align:middle;margin-left:6px">{I("star-four-points")} PLUS</span>'
+PB = f'<span class="plusb pbs">{I("star-four-points")} PLUS</span>'
+T = lambda f: data_uri(f'telas/{f}', AQUI)
 
-CSS_PN = '''.pn .fts{gap:26px}.pn .ft.lg{min-height:400px;padding:46px 46px;border-radius:44px}
-.pn .ft.lg .pi{width:112px;height:112px;font-size:60px;border-radius:32px;margin-bottom:32px}
-.pn .ft.lg b{font-size:44px;line-height:1.12}.pn .ft.lg p{font-size:30px;line-height:1.42;margin-top:16px}
-.pn h2.m2{font-size:104px;margin-bottom:28px}.pn .lede.m2{font-size:32px;margin-bottom:40px}'''
+CSS_PN = '''
+.pn h2.m2{font-size:100px;margin-bottom:22px}.pn .lede.m2{font-size:32px;margin-bottom:46px}
+.fig{position:relative;margin:0 0 54px}
+.shot{border-radius:24px;overflow:hidden;background:#fff;border:1px solid #dcdce1;box-shadow:0 30px 70px rgba(0,0,0,.14)}
+.shot .bar{height:40px;background:#ececf0;display:flex;align-items:center;gap:9px;padding:0 18px}
+.shot .bar em{width:13px;height:13px;border-radius:50%;background:#c7c7cc}
+.shot img{display:block;width:100%;aspect-ratio:1366/760;object-fit:cover;object-position:top left}
+.duo{padding-bottom:120px}.duo .shot{width:880px}
+.cel{width:290px;border-radius:46px;border:11px solid #1d1d1f;overflow:hidden;background:#1d1d1f;box-shadow:0 30px 70px rgba(0,0,0,.28)}
+.cel img{display:block;width:100%;aspect-ratio:390/790;object-fit:cover;object-position:top;border-radius:34px}
+.duo .cel{position:absolute;right:0;top:70px}
+.cels{display:flex;justify-content:center;gap:60px}.cels .cel{width:330px}
+.lis{display:grid;grid-template-columns:1fr 1fr;gap:30px 40px}
+.li{display:flex;gap:20px;align-items:center}
+.li .pi{margin:0;width:70px;height:70px;font-size:36px;border-radius:21px;flex-shrink:0}
+.li b{display:flex;align-items:center;gap:10px;font-family:IT;font-weight:700;font-size:31px;letter-spacing:-.02em;line-height:1.1}
+.li p{margin:5px 0 0;font-size:23px;line-height:1.3;color:#6e6e73}
+.pbs{font-size:15px;padding:5px 11px;letter-spacing:.08em}
+.capfig{position:relative;margin:80px auto 0;width:1000px}
+.capfig .shot{width:860px;border-color:#2c2c2e}
+.capfig .cel{position:absolute;right:0;top:60px;width:270px;border-color:#2c2c2e}
+'''
 
-def pagina(olho, titulo, lede, itens, gray=False):
+def shot(f):
+    return f'<div class="shot"><div class="bar"><em></em><em></em><em></em></div><img src="{T(f)}"></div>'
+
+def cel(f):
+    return f'<div class="cel"><img src="{T(f)}"></div>'
+
+def pagina(olho, titulo, lede, fig, itens, gray=False):
     itens = [x for x in itens if plus or not x[3]]
-    t = ''.join(f'<div class="ft lg"><span class="pi">{I(a)}</span><b>{b}{PB if p else ""}</b><p>{c}</p></div>' for a, b, c, p in itens)
+    t = ''.join(f'<div class="li"><span class="pi">{I(a)}</span><div><b>{b}{PB if p else ""}</b><p>{c}</p></div></div>' for a, b, c, p in itens)
     return f'''<section class="pg pn{" gray" if gray else ""}"><div class="eyebrow c-p">{olho}</div><h2 class="m2">{titulo}</h2>
-<p class="lede m2">{lede}</p><div class="fts">{t}</div><div class="foot"><span>x</span><span>0</span></div></section>'''
+<p class="lede m2">{lede}</p>{fig}<div class="lis">{t}</div><div class="foot"><span>x</span><span>0</span></div></section>'''
 
-P = [pagina('Atendimento', 'Do pedido<br>à entrega.', 'Tudo o que chega pelo app e o que está acontecendo agora, numa tela só.', [
-        ('clipboard-text-outline', 'Pedidos', 'Orçamentos e agendamentos que chegam pelo app: você responde com preço e data, e o cliente confirma.', 0),
-        ('car-wrench', 'Na oficina hoje', 'Os carros do dia, etapa por etapa. Você marca o andamento, manda fotos e pede aprovação de serviço extra.', 0),
-        ('calendar-month-outline', 'Agenda', 'Os horários marcados no calendário, com o que está esperando a sua resposta.', 0),
-        ('file-document-edit-outline', 'Ordens de serviço', 'OS de balcão com itens, termo de entrada, assinatura do cliente na tela e impressão em PDF.', 1)]),
-     pagina('Clientes', 'Quem é cliente,<br>sempre por perto.', 'Do cadastro ao retorno: o painel ajuda a trazer o cliente de volta.', [
-        ('account-group-outline', 'Clientes', 'Quem já foi atendido, com os carros e o histórico de serviços.', 0),
-        ('account-multiple-outline', 'Clientes de balcão', 'Cadastro de quem chega direto, com os carros, busca por nome ou placa e botão de WhatsApp.', 1),
-        ('qrcode', 'Clientes no app', 'QR Code para o balcão e mensagem pronta para convidar os seus clientes a usar o app.', 0),
-        ('bell-ring-outline', 'Alertas dos clientes', 'Avisos dos carros que você já atendeu, como manutenção vencida e o diagnóstico do app.', 0)], True),
-     pagina('Financeiro', 'O dinheiro<br>sob controle.', 'O que entrou, o que falta receber e como o mês está indo.', [
-        ('cash-check', 'Recebimentos', 'Pagamentos por Pix e cartão feitos pelo app, com o valor líquido de cada um e o estorno quando precisar.', 0),
-        ('cash-register', 'Caixa', 'Entradas e saídas do dia, dinheiro na gaveta, fechamento, contas a receber e o resultado do mês.', 1),
-        ('file-chart-outline', 'Relatório de atendimentos', 'Tudo o que foi entregue, com valores, garantia e anexos, para consultar e exportar em planilha.', 0),
-        ('chart-line', 'Desempenho', 'Os números do mês: velocidade de resposta, conversão dos pedidos e faturamento.', 0)]),
-     pagina(f'A sua vitrine', 'Do seu jeito,<br>com o seu time.', 'Você define o que o cliente vê e quem da equipe acessa o quê.', [
-        ('tag-multiple-outline', 'Serviços e preços', 'Seu cardápio com fotos, o que cada serviço inclui e o preço por porte do carro. Mudou aqui, mudou no app.', 0),
-        ('star-outline', 'Perfil e avaliações', 'A vitrine no app e as avaliações dos clientes, com a sua resposta pública.', 0),
-        ('account-key-outline', 'Equipe', 'Um login para cada pessoa. Quem é da equipe atualiza os carros do dia e não vê o financeiro.', 0),
-        ('handshake-outline', 'Parcerias com lojas', 'Revendas de veículos que indicam você para quem comprou carro com elas.', 0)], True),
-     pagina('Acesso e segurança', 'No computador<br>e no celular.', 'O painel abre no navegador, sem instalar nada.', [
-        ('monitor-cellphone', 'Em qualquer tela', 'No computador, os menus ficam em grupos. No celular, os atalhos principais ficam na barra de baixo.', 0),
-        ('history', 'Histórico que ninguém apaga', 'As ações importantes ficam registradas, com data e hora.', 0),
-        ('shield-lock-outline', 'Proteção contra senha errada', 'Tentativas seguidas travam a entrada por alguns minutos.', 0),
-        ('account-cancel-outline', 'Saiu da equipe, saiu na hora', 'Desativou o acesso, a entrada para no mesmo instante.', 0)])]
+P = [pagina('Atendimento', 'Do pedido<br>à entrega.', 'O cliente acompanha cada etapa pelo celular.',
+        f'<div class="fig">{shot("na-oficina-hoje.png")}</div>', [
+        ('clipboard-text-outline', 'Pedidos', 'Responda com preço e data.', 0),
+        ('car-wrench', 'Na oficina hoje', 'Cada carro, etapa por etapa.', 0),
+        ('calendar-month-outline', 'Agenda', 'Seus horários num calendário.', 0),
+        ('file-document-edit-outline', 'Ordens de serviço', 'Com assinatura na tela.', 1)]),
+     pagina('Clientes', 'Quem é cliente,<br>sempre por perto.', 'Do cadastro ao retorno.',
+        f'<div class="fig">{shot("clientes-balcao.png")}</div>', [
+        ('account-group-outline', 'Clientes', 'Histórico de cada carro.', 0),
+        ('account-multiple-outline', 'Clientes de balcão', 'Busca por nome ou placa.', 1),
+        ('qrcode', 'Clientes no app', 'QR Code e convite pronto.', 0),
+        ('bell-ring-outline', 'Alertas', 'Manutenção vencida dos seus clientes.', 0)], True),
+     pagina('Financeiro', 'O dinheiro<br>sob controle.', 'O que entrou, o que falta e o resultado do mês.',
+        f'<div class="fig duo">{shot("caixa.png")}{cel("celular-caixa.png")}</div>', [
+        ('cash-check', 'Recebimentos', 'Pix e cartão, já com o líquido.', 0),
+        ('cash-register', 'Caixa', 'Entradas, saídas e fechamento.', 1),
+        ('file-chart-outline', 'Relatório', 'Exporta em planilha.', 0),
+        ('chart-line', 'Desempenho', 'Os números do mês.', 0)]),
+     pagina('A sua vitrine', 'Do seu jeito,<br>com o seu time.', 'Mudou no painel, mudou no app.',
+        f'<div class="fig">{shot("servicos.png")}</div>', [
+        ('tag-multiple-outline', 'Serviços e preços', 'Com fotos e preço por porte.', 0),
+        ('star-outline', 'Perfil e avaliações', 'Sua vitrine no app.', 0),
+        ('account-key-outline', 'Equipe', 'Um login por pessoa.', 0),
+        ('handshake-outline', 'Parcerias', 'Lojas que indicam você.', 0)], True),
+     pagina('Acesso e segurança', 'No computador<br>e no celular.', 'Abre no navegador, sem instalar nada.',
+        f'<div class="fig cels">{cel("celular-menu.png")}{cel("celular-os.png")}</div>', [
+        ('monitor-cellphone', 'Qualquer tela', 'Computador ou celular.', 0),
+        ('history', 'Histórico', 'Tudo registrado, com data e hora.', 0),
+        ('shield-lock-outline', 'Senha errada', 'Trava após várias tentativas.', 0),
+        ('account-cancel-outline', 'Saiu da equipe', 'Acesso cortado na hora.', 0)])]
 
 s = open(f'{AQUI}/templates/template-{v["categoria"]}.html', encoding='utf-8').read()
 vals = {k: str(v[k]) for k in TPL_VARS if k in v}
@@ -60,8 +90,7 @@ capa = capa.replace('Uma apresentação para', 'Recursos do painel para', 1)
 capa = re.sub(r'<h1 class="xl">.*?</h1>', '<h1 class="xl">O seu painel.</h1>', capa, count=1, flags=re.S)
 capa = capa.replace('No bolso de cada', 'Tudo num lugar', 1).replace('>cliente.<', '>só.<', 1)
 capa = re.sub(r'<div class="coverphone">.*</div></section>$', '</section>', capa, flags=re.S)
-capa = capa.replace('<div class="glowp">', f'''<p style="font-size:34px;line-height:1.4;color:#a1a1a6;max-width:820px;margin:60px auto 0;font-weight:500">Pedidos, agenda, clientes e financeiro {de} {esc(ape)}, no computador ou no celular.</p>
-<div style="display:flex;justify-content:center;gap:18px;margin-top:70px;flex-wrap:wrap">{"".join(f'<span class="vpill" style="margin:0">{I(a)} {b}</span>' for a,b in [("clipboard-text-outline","Atendimento"),("account-group-outline","Clientes"),("cash-check","Financeiro"),("storefront-outline","Vitrine e equipe")])}</div><div class="glowp">''', 1)
+capa = capa.replace('<div class="glowp">', f'<div class="capfig">{shot("inicio.png")}{cel("celular-menu.png")}</div><div class="glowp">', 1)
 nova = [capa] + P + [secs[-1].group(0)]
 rod = f'Painel ClipCar para {art} {esc(nome)}'
 out = [re.sub(r'(<div class="foot[^"]*"><span>).*?</span><span>\d+</span></div>', lambda m, n=n: f'{m.group(1)}{rod}</span><span>{n}</span></div>', x, count=1, flags=re.S) for n, x in enumerate(nova, 1)]
