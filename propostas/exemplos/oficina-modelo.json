@@ -1,0 +1,11 @@
+{
+ "categoria": "mecanica",
+ "nome": "Oficina Modelo",
+ "artigo": "a",
+ "cor_principal": "#1F4FA3",
+ "cor_escura": "#0C1A38",
+ "taxa_clipcar_pct": 3,
+ "mensalidade": 99.90,
+ "modulo_plus": "nao",
+ "validade": "30/11/2026"
+}

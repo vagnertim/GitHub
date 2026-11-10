@@ -1,0 +1,122 @@
+{
+ "nome": {
+  "uso": "obrigatória",
+  "descricao": "Nome curto do prestador, usado nos textos (\"app da Lava Lento\", rodapé, cartaz). Até ~22 letras. Vazio = padrão da categoria (\"Sua Oficina\"): sempre preencha.",
+  "padrao_da_categoria": "Sua Funilaria",
+  "exemplo": "Lava Lento"
+ },
+ "nome_completo": {
+  "uso": "obrigatória",
+  "descricao": "Nome como aparece no topo do app e na agenda. Até ~28 letras.",
+  "padrao_da_categoria": "Sua Funilaria e Pintura",
+  "exemplo": "Lava Lento Ubatuba"
+ },
+ "artigo": {
+  "uso": "obrigatória",
+  "descricao": "Só a letra \"a\" (a Lava Lento → da, na) ou \"o\" (o Alto Giro → do, no), minúscula.",
+  "padrao_da_categoria": "a",
+  "exemplo": "a"
+ },
+ "logo": {
+  "uso": "recomendada",
+  "descricao": "Endereço da imagem do logo (https://... PNG, JPG ou SVG) ou data URI. Vazio = selo redondo com as iniciais do nome.",
+  "padrao_da_categoria": "",
+  "exemplo": "https://exemplo.com/logo.png"
+ },
+ "logo_fundo": {
+  "uso": "opcional",
+  "descricao": "Cor do fundo atrás do logo (selo da capa, topo do app e cartaz). Use \"transparent\" para logo sem fundo que funcione no escuro.",
+  "padrao_da_categoria": "#FFFFFF",
+  "exemplo": "#FFFFFF"
+ },
+ "cor_principal": {
+  "uso": "obrigatória",
+  "descricao": "Cor principal da marca, #RRGGBB: botões, destaques, ícones. Se for clara demais, o texto dos botões vira escuro sozinho.",
+  "padrao_da_categoria": "#1E88F5",
+  "exemplo": "#7B2FBE"
+ },
+ "cor_escura": {
+  "uso": "obrigatória",
+  "descricao": "Tom bem escuro para o topo do app, #RRGGBB (quase preto, puxado para a cor da marca).",
+  "padrao_da_categoria": "#0A1230",
+  "exemplo": "#0E0E12"
+ },
+ "cor_frase": {
+  "uso": "obrigatória",
+  "descricao": "Cor de destaque, #RRGGBB: a frase no topo do app e o fim do degradê do título da capa.",
+  "padrao_da_categoria": "#AAB6D3",
+  "exemplo": "#E3A40B"
+ },
+ "frase": {
+  "uso": "opcional",
+  "descricao": "Frase curta embaixo do \"Boa tarde\" no app (slogan, ou \"Autocenter em Ubatuba\"). Até ~40 letras. \"-\" esconde.",
+  "padrao_da_categoria": "Funilaria e pintura",
+  "exemplo": "A pressa é inimiga da perfeição!"
+ },
+ "titulo_capa": {
+  "uso": "opcional",
+  "descricao": "Título grande da capa, com ponto final. Até ~24 letras para caber numa linha.",
+  "padrao_da_categoria": "Sua funilaria.",
+  "exemplo": "Sua estética automotiva."
+ },
+ "codigo_qr": {
+  "uso": "opcional",
+  "descricao": "Código do QR do cartaz: vira clipcar.com.br/baixar/?c=CODIGO&o=balcao. Só letras, números e hífen. Vazio = nome sem espaços nem acentos.",
+  "padrao_da_categoria": "",
+  "exemplo": "lavalento"
+ },
+ "servico_1": {
+  "uso": "opcional",
+  "descricao": "Serviço 1 da lista \"Nossos serviços\" (o ícone acompanha o nome, como no app). Vazio = padrão da categoria; \"-\" esconde a linha.",
+  "padrao_da_categoria": "Funilaria e pintura",
+  "exemplo": "Lavagem Essencial"
+ },
+ "servico_2": {
+  "uso": "opcional",
+  "descricao": "Serviço 2 da lista.",
+  "padrao_da_categoria": "Martelinho de ouro",
+  "exemplo": "Lavagem Absoluto"
+ },
+ "servico_3": {
+  "uso": "opcional",
+  "descricao": "Serviço 3 da lista.",
+  "padrao_da_categoria": "Reparo de para-choque",
+  "exemplo": "Lavagem Proteção do Brilho"
+ },
+ "servico_4": {
+  "uso": "opcional",
+  "descricao": "Serviço 4 da lista.",
+  "padrao_da_categoria": "Pintura de peça",
+  "exemplo": "Lavagem + Polimento Premium"
+ },
+ "servico_5": {
+  "uso": "opcional",
+  "descricao": "Serviço 5 da lista.",
+  "padrao_da_categoria": "Polimento",
+  "exemplo": "Tratamento Diamante Black"
+ },
+ "foto_1": {
+  "uso": "opcional",
+  "descricao": "Foto do \"serviço extra\" e do andamento (4:5, em pé). Endereço https ou data URI. Vazio = ilustração da categoria.",
+  "padrao_da_categoria": "(ilustração embutida no template)",
+  "exemplo": "https://exemplo.com/foto1.jpg"
+ },
+ "foto_2": {
+  "uso": "opcional",
+  "descricao": "Segunda foto do andamento (4:5).",
+  "padrao_da_categoria": "(ilustração embutida no template)",
+  "exemplo": "https://exemplo.com/foto2.jpg"
+ },
+ "foto_3": {
+  "uso": "opcional",
+  "descricao": "Terceira foto do andamento (4:5).",
+  "padrao_da_categoria": "(ilustração embutida no template)",
+  "exemplo": "https://exemplo.com/foto3.jpg"
+ },
+ "nota_servicos": {
+  "uso": "opcional",
+  "descricao": "Letra miúda sob a tela de serviços. Use \"-\" (esconde) quando os serviços forem os de verdade do prestador.",
+  "padrao_da_categoria": "Serviços de exemplo. Na visita, montamos com a lista e os preços de vocês.",
+  "exemplo": "Serviços de exemplo. Na visita, montamos com a lista e os preços de vocês."
+ }
+}
