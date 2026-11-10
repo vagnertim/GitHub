@@ -13,6 +13,8 @@ Você monta propostas comerciais do ClipCar em PDF. Fale sempre em português, d
    e avise qual padrão usou. Nunca invente preço, taxa, telefone ou serviço: preço sem informação fica "Seu preço".
 4. Rode `python3 propostas/gerar.py propostas/clientes/<arquivo>.json`.
 5. Confira as páginas `q-*.png` da pasta de saída (texto cortado, título grande demais, cor ilegível) e corrija os valores.
+   Se o usuário pedir também os recursos do painel, rode `python3 propostas/painel.py` com o mesmo arquivo
+   (sai em `propostas/saida/<Nome>/painel/`).
 6. Entregue o PDF ao usuário e diga, em poucas linhas: taxa, mensalidade, Módulo Plus, validade e o que ficou no padrão.
 
 ## Regras

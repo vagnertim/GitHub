@@ -7,6 +7,11 @@ taxas da Asaas (página separada), exemplos e próximos passos.
     python3 propostas/gerar.py propostas/clientes/<arquivo>.json
 
 O PDF sai em `propostas/saida/<Nome>/`. Precisa de Python 3, Node e Playwright (Chromium).
+Recursos do painel do prestador (7 páginas, com o mesmo JSON; o selo PLUS some se `modulo_plus` for `nao`):
+
+    python3 propostas/painel.py propostas/clientes/<arquivo>.json
+
+Sai em `propostas/saida/<Nome>/painel/`.
 No Claude Code, é só pedir: "gere a proposta para ..." (agente `proposta-comercial`).
 
 ## Valores
